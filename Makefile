@@ -2,7 +2,13 @@ MAKEFLAGS += --no-print-directory
 
 .DEFAULT_GOAL := help
 
-.PHONY: check-pio help install-pio
+.PHONY: build check-pio clean help install-pio
+
+build: check-pio ## Compile firmware
+	./.make/run-pio.sh run
+
+clean: ## Remove build artifacts
+	./.make/clean.sh
 
 install-pio: ## Install PlatformIO
 	@./.make/install-pio.sh
