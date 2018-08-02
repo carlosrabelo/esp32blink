@@ -2,7 +2,7 @@ MAKEFLAGS += --no-print-directory
 
 .DEFAULT_GOAL := help
 
-.PHONY: build check-pio clean erase flash help install-pio monitor upload
+.PHONY: build check check-pio clean deps erase flash help install-pio monitor test upload
 
 build: check-pio ## Compile firmware
 	./.make/run-pio.sh run
@@ -17,6 +17,15 @@ monitor: check-pio ## Open serial monitor
 
 clean: ## Remove build artifacts
 	./.make/clean.sh
+
+deps: check-pio ## Install dependencies
+	./.make/run-pio.sh pkg install
+
+check: check-pio ## Run static analysis
+	./.make/run-pio.sh check
+
+test: check-pio ## Run unit tests
+	./.make/run-pio.sh test
 
 erase: check-pio ## Erase device flash memory
 	./.make/run-pio.sh run --target erase
