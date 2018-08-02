@@ -3,6 +3,10 @@
 
 const int LED_PIN = 2;
 
+const uint32_t HEART_ON_MS = 80;
+const uint32_t HEART_GAP_MS = 120;
+const uint32_t HEART_REST_MS = 700;
+
 static const char *resetReasonName(esp_reset_reason_t reason) {
     switch (reason) {
         case ESP_RST_POWERON:   return "power-on";
@@ -55,6 +59,17 @@ static void ledSelfTest() {
     }
 }
 
+static void heartbeat() {
+    digitalWrite(LED_PIN, HIGH);
+    delay(HEART_ON_MS);
+    digitalWrite(LED_PIN, LOW);
+    delay(HEART_GAP_MS);
+    digitalWrite(LED_PIN, HIGH);
+    delay(HEART_ON_MS);
+    digitalWrite(LED_PIN, LOW);
+    delay(HEART_REST_MS + (esp_random() % 200));
+}
+
 void setup() {
     Serial.begin(115200);
     delay(50);
@@ -65,13 +80,10 @@ void setup() {
     printIdentity();
     ledSelfTest();
 
-    Serial.printf("  led      GPIO %d self-test done\n", LED_PIN);
+    Serial.printf("  led      GPIO %d self-test done, heartbeat running\n", LED_PIN);
     Serial.println();
 }
 
 void loop() {
-    digitalWrite(LED_PIN, HIGH);
-    delay(500);
-    digitalWrite(LED_PIN, LOW);
-    delay(500);
+    heartbeat();
 }
