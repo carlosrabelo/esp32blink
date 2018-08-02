@@ -46,6 +46,15 @@ static void printIdentity() {
     Serial.printf("  reset    %s\n", resetReasonName(esp_reset_reason()));
 }
 
+static void ledSelfTest() {
+    for (int i = 0; i < 3; i++) {
+        digitalWrite(LED_PIN, HIGH);
+        delay(60);
+        digitalWrite(LED_PIN, LOW);
+        delay(60);
+    }
+}
+
 void setup() {
     Serial.begin(115200);
     delay(50);
@@ -54,6 +63,10 @@ void setup() {
     digitalWrite(LED_PIN, LOW);
 
     printIdentity();
+    ledSelfTest();
+
+    Serial.printf("  led      GPIO %d self-test done\n", LED_PIN);
+    Serial.println();
 }
 
 void loop() {
