@@ -2,18 +2,29 @@ MAKEFLAGS += --no-print-directory
 
 .DEFAULT_GOAL := help
 
-.PHONY: build check check-pio clean deps erase flash help install-pio monitor test upload
+-include .env
+
+UPLOAD_PORT      ?= /dev/ttyUSB0
+MONITOR_PORT     ?= /dev/ttyUSB0
+MONITOR_SPEED    ?= 115200
+UPLOAD_SPEED     ?= 921600
+
+.PHONY: build check check-pio clean deps detect-port erase flash help install-pio monitor test upload
 
 build: check-pio ## Compile firmware
 	./.make/run-pio.sh run
 
 upload: check-pio ## Upload firmware to device
-	./.make/run-pio.sh run --target upload
+	./.make/run-pio.sh run --target upload \
+	    --upload-port $(UPLOAD_PORT) \
+	    --upload-speed $(UPLOAD_SPEED)
 
 flash: build upload ## Compile and upload
 
 monitor: check-pio ## Open serial monitor
-	./.make/run-pio.sh device monitor
+	./.make/run-pio.sh device monitor \
+	    --port $(MONITOR_PORT) \
+	    --baud $(MONITOR_SPEED)
 
 clean: ## Remove build artifacts
 	./.make/clean.sh
@@ -29,6 +40,9 @@ test: check-pio ## Run unit tests
 
 erase: check-pio ## Erase device flash memory
 	./.make/run-pio.sh run --target erase
+
+detect-port: ## Auto-detect board USB port and save to .env
+	@./.make/detect_board.sh
 
 install-pio: ## Install PlatformIO
 	@./.make/install-pio.sh
