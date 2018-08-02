@@ -2,13 +2,24 @@ MAKEFLAGS += --no-print-directory
 
 .DEFAULT_GOAL := help
 
-.PHONY: build check-pio clean help install-pio
+.PHONY: build check-pio clean erase flash help install-pio monitor upload
 
 build: check-pio ## Compile firmware
 	./.make/run-pio.sh run
 
+upload: check-pio ## Upload firmware to device
+	./.make/run-pio.sh run --target upload
+
+flash: build upload ## Compile and upload
+
+monitor: check-pio ## Open serial monitor
+	./.make/run-pio.sh device monitor
+
 clean: ## Remove build artifacts
 	./.make/clean.sh
+
+erase: check-pio ## Erase device flash memory
+	./.make/run-pio.sh run --target erase
 
 install-pio: ## Install PlatformIO
 	@./.make/install-pio.sh
