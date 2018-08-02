@@ -6,6 +6,7 @@ const int LED_PIN = 2;
 const uint32_t HEART_ON_MS = 80;
 const uint32_t HEART_GAP_MS = 120;
 const uint32_t HEART_REST_MS = 700;
+const uint32_t STATUS_EVERY_MS = 10000;
 
 static const char *resetReasonName(esp_reset_reason_t reason) {
     switch (reason) {
@@ -85,5 +86,16 @@ void setup() {
 }
 
 void loop() {
+    static uint32_t lastStatus = 0;
+
     heartbeat();
+
+    const uint32_t now = millis();
+    if (now - lastStatus >= STATUS_EVERY_MS) {
+        lastStatus = now;
+        Serial.printf("up %lus  heap %u  gpio%d heartbeat\n",
+                      now / 1000UL,
+                      ESP.getFreeHeap(),
+                      LED_PIN);
+    }
 }
