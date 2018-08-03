@@ -31,7 +31,8 @@ src/secret.h
 # ============================================================================
 
 # Directories
-.vscode/
+.vscode/*
+!.vscode/extensions.json
 .idea/
 
 # Files
